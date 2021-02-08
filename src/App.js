@@ -44,7 +44,7 @@ function App() {
     fetchCart()
   }, []);
 
-  console.log("___PRODS", cart)
+  // console.log("___PRODS", cart)
     return (
       <Router>
         <div>
@@ -61,7 +61,7 @@ function App() {
             />
           </Route>
           <Route exact path="/checkout">
-            <Checkout  />
+            <Checkout  cart={cart} />
           </Route>
         </Switch>
         </div>
