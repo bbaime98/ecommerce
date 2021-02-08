@@ -3,15 +3,35 @@ import { CssBaseline, Paper, Stepper, Step, StepLabel, Typography, CircularProgr
 import AddressForm from '../AddressForm'
 import PaymentForm from '../PaymentForm'
 
+import { commerce } from '../../../lib/commerce';
+
 import useStyles from './styles';
 
 const steps = ['Shipping address', 'Payment details'];
 
-const Checkout = () => {
+const Checkout = ({cart}) => {
   const [activeStep, setActiveStep] = useState(0);
+  const [checkoutToken, setCheckoutToken] = useState('');
+
   const classes = useStyles()
 
-  const Form = () => activeStep === 0 ? <AddressForm /> : <PaymentForm />
+  useEffect(() => {
+    // if (cart.id) {
+      const generateToken = async () => {
+        try {
+          const token = await commerce.checkout.generateToken(cart.id, { type: 'cart' });
+          console.log("CHECJOUT___TOKEN___", token)
+          setCheckoutToken(token);
+        } catch {
+          // if (activeStep !== steps.length) history.push('/');
+        }
+      };
+
+      generateToken();
+    // }
+  }, [cart]);
+
+  const Form = () => activeStep === 0 ? <AddressForm checkoutToken={checkoutToken}/> : <PaymentForm />
   const Confirmation = () => <div>confirmation</div>
   return (
     <>
@@ -27,7 +47,7 @@ const Checkout = () => {
               </Step>
             ))}
           </Stepper>
-          { activeStep === steps.length ? <Confirmation /> : <Form />}
+          { activeStep === steps.length ? <Confirmation /> : checkoutToken && <Form />}
         </Paper>
       </main>
     </>
